@@ -16,10 +16,33 @@ void CrearUnHash_ConCapacidadMayorATres_CreaUnHashConEsaCapacidad(){
   hash_destruir(tabla);
 }
 
+void UnaTablaHash_SiInsertoUnElemento_SeAgregaAlaTabla(){
+  hash_t* tabla = hash_crear(NULL, 10);
+  char* clave = "h";
+  void* elemento = (void*)0xBEBECAF1;
+  int test = hash_insertar(tabla, clave, elemento);
+  pa2m_afirmar(test != -1, "Se agrego un elemento a la tabla");
+  hash_destruir(tabla);
+}
 
+void UnaTablaHash_SiSuperaFactorDeCarga_Rehashea(){
+  hash_t* tabla = hash_crear(NULL, 3);
+  char* clave1 = "h";
+  void* elemento1 = (void*)0xBEBECAF1; 
+ // char* clave2 = "holis2"; 
+ // void* elemento2 = (void*)0xBEBECAF1;
+  int test1 = hash_insertar(tabla, clave1, elemento1);
+ // int test2 = hash_insertar(tabla, clave2, elemento2);
+  pa2m_afirmar(test1 != -1, "Se agrego un elemento a la tabla");
+ // pa2m_afirmar(test2 != -1, "Se agrego un elemento a la tabla");
+  hash_destruir(tabla);
+}
 int main(){
   pa2m_nuevo_grupo("Creacion de tabla de hash");
   CrearUnHash_ConCapacidadMenorATres_CreaUnHashConCapacidadTres();
   CrearUnHash_ConCapacidadMayorATres_CreaUnHashConEsaCapacidad();
+  pa2m_nuevo_grupo("Insercion en la tabla de hash");
+  UnaTablaHash_SiInsertoUnElemento_SeAgregaAlaTabla();
+  UnaTablaHash_SiSuperaFactorDeCarga_Rehashea();
   return pa2m_mostrar_reporte();
 }

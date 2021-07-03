@@ -1,11 +1,14 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "hash.h"
 
 #define FACTOR_CARGA 0.75
+#define ERROR -1
+#define VALIDO 0
 
 typedef struct nodo_hash{
-  char* clave;
+  const char* clave;
   void* valor;
 }nodo_hash_t;
 
@@ -16,16 +19,30 @@ struct hash{
   hash_destruir_dato_t destructor;
 };
 
-size_t funcion_hash(char* clave, size_t capacidad_tabla){
-  return 0;
+size_t funcion_hash(const char* clave, size_t capacidad_tabla){
+  size_t auxiliar = 0;
+  for(int i = 0; i < strlen(clave); i++)
+    auxiliar += clave[i];
+  size_t posicion = (size_t)(auxiliar%capacidad_tabla);
+  return posicion;
 }
 
 bool excede_factor_carga(size_t capacidad_tabla, size_t cant_ocupadas){
   bool excedido = false;
-  double resultado = ((double)capacidad_tabla/cant_ocupadas);
+  if(cant_ocupadas == 0)
+    cant_ocupadas = 1;
+  double resultado = capacidad_tabla%cant_ocupadas;
   if(resultado >= FACTOR_CARGA)
     excedido = true;
   return excedido;
+}
+
+nodo_hash_t** nodo_hash_crear(size_t capacidad){
+  nodo_hash_t** nodo_hash = calloc(1, (sizeof(nodo_hash_t)*capacidad));
+  if(!nodo_hash)
+    return NULL;
+
+  return nodo_hash;
 }
 
 hash_t* hash_crear(hash_destruir_dato_t destruir_elemento, size_t capacidad_inicial){
@@ -38,15 +55,36 @@ hash_t* hash_crear(hash_destruir_dato_t destruir_elemento, size_t capacidad_inic
 
   hash->capacidad_tabla = capacidad_inicial;
   hash->destructor = destruir_elemento;
-  hash->tabla_hash = calloc(1, (sizeof(nodo_hash_t)*hash->capacidad_tabla));
+  hash->tabla_hash = nodo_hash_crear(capacidad_inicial);
   if(!hash->tabla_hash)
     return NULL;
 
   return hash;
 }
 
+nodo_hash_t* nodo_hash_insertar(const char* clave, void* elemento){
+  nodo_hash_t* auxiliar = calloc(1, sizeof(nodo_hash_t));
+  if(!auxiliar)
+    return NULL;
+  auxiliar->clave = clave;
+  auxiliar->valor = elemento;
+  return auxiliar;
+}
+
+
 int hash_insertar(hash_t* hash, const char* clave, void* elemento){
-  return 0;
+  if(!hash || !clave)
+    return ERROR;
+  if(excede_factor_carga(hash->capacidad_tabla, hash->cant_ocupadas)){
+    printf("%zu\n", hash->cant_ocupadas);
+  } else {
+    size_t posicion = funcion_hash(clave, hash->capacidad_tabla);
+    hash->tabla_hash[posicion] = nodo_hash_insertar(clave, elemento);
+    if(!hash->tabla_hash[posicion])
+      return ERROR;
+    hash->cant_ocupadas++;
+  }
+  return VALIDO;
 }
 
 int hash_quitar(hash_t* hash, const char* clave){
@@ -66,6 +104,10 @@ bool hash_contiene(hash_t* hash, const char* clave){
 }
 
 void hash_destruir(hash_t* hash){
+  if(hash->destructor){
+  }
+  for(int i = 0; i < hash->capacidad_tabla; i++)
+      free(hash->tabla_hash[i]);
   free(hash->tabla_hash);
   free(hash);
 }
