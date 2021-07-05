@@ -86,6 +86,16 @@ void UnaTablaDeHash_SeInsertaSoloUnElemento_ElHashTieneUnElementoOcupado(){
   hash_destruir(tabla);
 }
 
+void UnaTablaDeHash_SeInsertaSoloUnElemento_ElHashContieneEsteElemento(){
+  hash_t* tabla = hash_crear(NULL, 10);
+  char* clave1 = "aa";
+  void* elemento1 = (void*)0xBEBECAF1;
+  hash_insertar(tabla, clave1, elemento1);
+  bool test = hash_contiene(tabla, clave1);
+  pa2m_afirmar(test, "El hash tiene la clave indicada.");
+  hash_destruir(tabla);
+}
+
 int main(){
   pa2m_nuevo_grupo("Creacion de tabla de hash");
   CrearUnHash_ConCapacidadMenorATres_CreaUnHashConCapacidadTres();
@@ -99,5 +109,7 @@ int main(){
   UnaTablaDeHash_SiSeBuscaUnElementoNoInsertado_NoSeEncuentraElElemento();
   pa2m_nuevo_grupo("Hash Cantidad Ocupada");
   UnaTablaDeHash_SeInsertaSoloUnElemento_ElHashTieneUnElementoOcupado();
+  pa2m_nuevo_grupo("Hash Contiene clave");
+  UnaTablaDeHash_SeInsertaSoloUnElemento_ElHashContieneEsteElemento();
   return pa2m_mostrar_reporte();
 }

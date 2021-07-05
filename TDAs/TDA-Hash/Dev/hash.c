@@ -142,7 +142,7 @@ void* hash_obtener(hash_t* hash, const char* clave){
   size_t posicion = funcion_hash(clave, hash->capacidad_tabla);
   if(hash->tabla_hash[posicion] && hash->tabla_hash[posicion]->clave == clave){
     return hash->tabla_hash[posicion]->valor;
-  } else{
+  }else{
     while(hash->tabla_hash[posicion] && hash->tabla_hash[posicion]->clave != clave){
       if(posicion == (hash->capacidad_tabla-1)){
         posicion = 0;
