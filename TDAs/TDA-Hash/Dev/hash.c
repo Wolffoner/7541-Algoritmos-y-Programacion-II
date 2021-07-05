@@ -133,7 +133,23 @@ int hash_insertar(hash_t* hash, const char* clave, void* elemento){
 }
 
 int hash_quitar(hash_t* hash, const char* clave){
-  return 0;
+  if(!hash || !clave)
+    return ERROR;
+  size_t posicion = funcion_hash(clave, hash->capacidad_tabla);
+  size_t posicion_proxima = posicion + 1;
+  if(posicion == hash->capacidad_tabla-1){
+    posicion_proxima = 0;
+  }
+  if(!hash->tabla_hash[posicion_proxima]){
+    if(hash->destructor){
+    }
+    free(hash->tabla_hash[posicion]);
+    hash->tabla_hash[posicion] = NULL;
+    return VALIDO;
+  } else {
+    
+  }
+  return ERROR;
 }
 
 void* hash_obtener(hash_t* hash, const char* clave){
@@ -176,8 +192,11 @@ bool hash_contiene(hash_t* hash, const char* clave){
 void hash_destruir(hash_t* hash){
   if(hash->destructor){
   }
-  for(int i = 0; i < hash->capacidad_tabla; i++)
+  for(int i = 0; i < hash->capacidad_tabla; i++){
+    if(hash->tabla_hash[i] != NULL){
       free(hash->tabla_hash[i]);
+    }
+  }
   free(hash->tabla_hash);
   free(hash);
 }
