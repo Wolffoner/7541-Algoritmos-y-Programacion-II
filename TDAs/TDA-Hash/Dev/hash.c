@@ -80,6 +80,7 @@ int nodo_hash_insertar(nodo_hash_t** tabla_hash, size_t capacidad, const char* c
   nodo_hash_t* nodo = nodo_hash_crear(clave, elemento);
   if(!nodo)
     return ERROR;
+
   if(!tabla_hash[posicion]){
     tabla_hash[posicion] = nodo;
   }else{
@@ -137,7 +138,24 @@ int hash_quitar(hash_t* hash, const char* clave){
 }
 
 void* hash_obtener(hash_t* hash, const char* clave){
-  return NULL;
+  if(!hash || !clave)
+    return NULL;
+  size_t posicion = funcion_hash(clave, hash->capacidad_tabla);
+  if(hash->tabla_hash[posicion] && hash->tabla_hash[posicion]->clave == clave){
+    return hash->tabla_hash[posicion]->valor;
+  } else{
+    if(posicion == (hash->capacidad_tabla-1))
+      posicion = 0;
+    posicion++;
+    while(hash->tabla_hash[posicion] && hash->tabla_hash[posicion]->clave != clave){
+      posicion++;
+    }
+    if(!hash->tabla_hash[posicion]){
+      return NULL;
+    }else{
+      return hash->tabla_hash[posicion]->valor;
+    }
+  }
 }
 
 size_t hash_cantidad(hash_t* hash){
