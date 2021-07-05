@@ -29,12 +29,16 @@ void UnaTablaHash_SiSuperaFactorDeCarga_Rehashea(){
   hash_t* tabla = hash_crear(NULL, 3);
   char* clave1 = "h";
   void* elemento1 = (void*)0xBEBECAF1; 
- // char* clave2 = "holis2"; 
- // void* elemento2 = (void*)0xBEBECAF1;
+  char* clave2 = "holis2"; 
+  void* elemento2 = (void*)0xBEBECAF2;
+  char* clave3 = "aa"; 
+  void* elemento3 = (void*)0xBEBECAF3;
   int test1 = hash_insertar(tabla, clave1, elemento1);
- // int test2 = hash_insertar(tabla, clave2, elemento2);
+  int test2 = hash_insertar(tabla, clave2, elemento2);
+  int test3 = hash_insertar(tabla, clave3, elemento3);
   pa2m_afirmar(test1 != -1, "Se agrego un elemento a la tabla");
- // pa2m_afirmar(test2 != -1, "Se agrego un elemento a la tabla");
+  pa2m_afirmar(test2 != -1, "Se agrega un elemento a la tabla");
+  pa2m_afirmar(test3 != -1, "Se rehashea y se agrega un elemento a la tabla");
   hash_destruir(tabla);
 }
 int main(){

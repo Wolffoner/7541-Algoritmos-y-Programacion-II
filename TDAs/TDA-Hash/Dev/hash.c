@@ -37,7 +37,7 @@ bool excede_factor_carga(size_t capacidad_tabla, size_t cant_ocupadas){
   return excedido;
 }
 
-nodo_hash_t** nodo_hash_crear(size_t capacidad){
+nodo_hash_t** tabla_hash_crear(size_t capacidad){
   nodo_hash_t** nodo_hash = calloc(1, (sizeof(nodo_hash_t)*capacidad));
   if(!nodo_hash)
     return NULL;
@@ -55,14 +55,14 @@ hash_t* hash_crear(hash_destruir_dato_t destruir_elemento, size_t capacidad_inic
 
   hash->capacidad_tabla = capacidad_inicial;
   hash->destructor = destruir_elemento;
-  hash->tabla_hash = nodo_hash_crear(capacidad_inicial);
+  hash->tabla_hash = tabla_hash_crear(capacidad_inicial);
   if(!hash->tabla_hash)
     return NULL;
 
   return hash;
 }
 
-nodo_hash_t* nodo_hash_insertar(const char* clave, void* elemento){
+nodo_hash_t* nodo_hash_crear(const char* clave, void* elemento){
   nodo_hash_t* auxiliar = calloc(1, sizeof(nodo_hash_t));
   if(!auxiliar)
     return NULL;
@@ -71,20 +71,65 @@ nodo_hash_t* nodo_hash_insertar(const char* clave, void* elemento){
   return auxiliar;
 }
 
+int nodo_hash_insertar(nodo_hash_t** tabla_hash, size_t capacidad, const char* clave, void* elemento){
+  size_t posicion = funcion_hash(clave, capacidad);
+  if(tabla_hash[posicion] && tabla_hash[posicion]->clave == clave){
+    tabla_hash[posicion]->valor = elemento;
+    return VALIDO;
+  }
+  nodo_hash_t* nodo = nodo_hash_crear(clave, elemento);
+  if(!nodo)
+    return ERROR;
+  if(!tabla_hash[posicion]){
+    tabla_hash[posicion] = nodo;
+  }else{
+    while(tabla_hash[posicion])
+      if(posicion == capacidad-1){
+        posicion = 0;
+        posicion++;
+      } else {
+        posicion++;
+      }
+    tabla_hash[posicion] = nodo;
+  }
+  return VALIDO;
+}
+
+void reemplazar_tabla(nodo_hash_t*** tabla, nodo_hash_t** tabla_cambiar){
+  nodo_hash_t** tabla_liberar = *tabla;
+  *tabla = tabla_cambiar;
+  free(tabla_liberar);
+}
+
+bool rehash_tabla(hash_t* hash){
+  nodo_hash_t** tabla_auxiliar = tabla_hash_crear(hash->capacidad_tabla*2);
+  if(!tabla_auxiliar)
+    return false;
+
+  for(int i = 0; i < hash->capacidad_tabla; i++){
+    if(hash->tabla_hash[i]){
+      nodo_hash_insertar(tabla_auxiliar,hash->capacidad_tabla*2, hash->tabla_hash[i]->clave, hash->tabla_hash[i]->valor);
+      free(hash->tabla_hash[i]);
+    }
+  }
+  hash->capacidad_tabla = hash->capacidad_tabla*2;
+  reemplazar_tabla(&hash->tabla_hash, tabla_auxiliar);
+  return true;
+}
 
 int hash_insertar(hash_t* hash, const char* clave, void* elemento){
   if(!hash || !clave)
     return ERROR;
   if(excede_factor_carga(hash->capacidad_tabla, hash->cant_ocupadas)){
-    printf("%zu\n", hash->cant_ocupadas);
-  } else {
-    size_t posicion = funcion_hash(clave, hash->capacidad_tabla);
-    hash->tabla_hash[posicion] = nodo_hash_insertar(clave, elemento);
-    if(!hash->tabla_hash[posicion])
+    bool rehasheo = rehash_tabla(hash);
+    if(!rehasheo)
       return ERROR;
-    hash->cant_ocupadas++;
   }
-  return VALIDO;
+  if(nodo_hash_insertar(hash->tabla_hash, hash->capacidad_tabla, clave, elemento) == VALIDO){
+    hash->cant_ocupadas++;
+    return VALIDO;
+  }
+  return ERROR;
 }
 
 int hash_quitar(hash_t* hash, const char* clave){
