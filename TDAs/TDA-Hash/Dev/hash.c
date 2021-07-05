@@ -87,7 +87,6 @@ int nodo_hash_insertar(nodo_hash_t** tabla_hash, size_t capacidad, const char* c
     while(tabla_hash[posicion])
       if(posicion == capacidad-1){
         posicion = 0;
-        posicion++;
       } else {
         posicion++;
       }
@@ -144,11 +143,12 @@ void* hash_obtener(hash_t* hash, const char* clave){
   if(hash->tabla_hash[posicion] && hash->tabla_hash[posicion]->clave == clave){
     return hash->tabla_hash[posicion]->valor;
   } else{
-    if(posicion == (hash->capacidad_tabla-1))
-      posicion = 0;
-    posicion++;
     while(hash->tabla_hash[posicion] && hash->tabla_hash[posicion]->clave != clave){
-      posicion++;
+      if(posicion == (hash->capacidad_tabla-1)){
+        posicion = 0;
+      } else {
+        posicion++;
+      }
     }
     if(!hash->tabla_hash[posicion]){
       return NULL;
@@ -159,11 +159,18 @@ void* hash_obtener(hash_t* hash, const char* clave){
 }
 
 size_t hash_cantidad(hash_t* hash){
-  return 0;
+  if(!hash)
+    return 0;
+  return hash->cant_ocupadas;
 }
 
 bool hash_contiene(hash_t* hash, const char* clave){
-  return false;
+  if(!hash || !clave)
+    return false;
+  void* elemento = hash_obtener(hash, clave);
+  if(!elemento)
+    return false;
+  return true;
 }
 
 void hash_destruir(hash_t* hash){

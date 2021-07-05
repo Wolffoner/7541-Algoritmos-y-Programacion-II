@@ -75,6 +75,17 @@ void UnaTablaDeHash_SiSeBuscaUnElementoNoInsertado_NoSeEncuentraElElemento(){
   pa2m_afirmar(elemento == NULL, "No se encontro el elemento porque no esta dentro del hash.");
   hash_destruir(tabla);
 }
+
+void UnaTablaDeHash_SeInsertaSoloUnElemento_ElHashTieneUnElementoOcupado(){
+  hash_t* tabla = hash_crear(NULL, 10);
+  char* clave1 = "aa";
+  void* elemento1 = (void*)0xBEBECAF1;
+  hash_insertar(tabla, clave1, elemento1);
+  size_t test = hash_cantidad(tabla);
+  pa2m_afirmar(test == 1, "El hash tiene la cantidad ocupada indiciada.");
+  hash_destruir(tabla);
+}
+
 int main(){
   pa2m_nuevo_grupo("Creacion de tabla de hash");
   CrearUnHash_ConCapacidadMenorATres_CreaUnHashConCapacidadTres();
@@ -86,5 +97,7 @@ int main(){
   pa2m_nuevo_grupo("Obtener elemento en la tabla de hash");
   UnaTablaDeHash_SiSeBuscaUnElementoInsertado_SeEncuentra();
   UnaTablaDeHash_SiSeBuscaUnElementoNoInsertado_NoSeEncuentraElElemento();
+  pa2m_nuevo_grupo("Hash Cantidad Ocupada");
+  UnaTablaDeHash_SeInsertaSoloUnElemento_ElHashTieneUnElementoOcupado();
   return pa2m_mostrar_reporte();
 }
