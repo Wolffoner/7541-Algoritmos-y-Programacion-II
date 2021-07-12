@@ -140,15 +140,11 @@ int hash_quitar(hash_t* hash, const char* clave){
   if(posicion == hash->capacidad_tabla-1){
     posicion_proxima = 0;
   }
-  if(!hash->tabla_hash[posicion_proxima]){
-    if(hash->destructor){
-    }
-    free(hash->tabla_hash[posicion]);
-    hash->tabla_hash[posicion] = NULL;
-    return VALIDO;
-  } else {
-    
+  if(hash->destructor){
   }
+  free(hash->tabla_hash[posicion]);
+  hash->tabla_hash[posicion] = NULL;
+
   return ERROR;
 }
 
