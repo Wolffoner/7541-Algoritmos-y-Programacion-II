@@ -104,7 +104,21 @@ void UnaTablaDeHash_SeEliminaUnElemento_ElHashQuedaSinEseElemento(){
   int test = hash_quitar(tabla, clave1);
   pa2m_afirmar(test == 0, "Se pudo eliminar el elemento");
   hash_destruir(tabla);
+}
 
+void UnaTablaDeHash_SeEliminaUnElementoYtieneUnProximo_ElHashQuedaSinEseElemento(){
+  hash_t* tabla = hash_crear(NULL, 3);
+  char* clave1 = "aa";
+  void* elemento1 = (void*)0xBEBECAF1;
+  char* clave2 = "hh";
+  void* elemento2 = (void*)0xBEBECAF1;
+  hash_insertar(tabla, clave1, elemento1);
+  hash_insertar(tabla, clave2, elemento2);
+  int test = hash_quitar(tabla, clave1);
+  pa2m_afirmar(test == 0, "Se pudo eliminar el elemento");
+  void* elem = hash_obtener(tabla, clave2);
+  pa2m_afirmar( elem == elemento2, "El Segundo elemento agregado sigue en el hash");
+  hash_destruir(tabla);
 }
 
 int main(){
@@ -124,5 +138,6 @@ int main(){
   UnaTablaDeHash_SeInsertaSoloUnElemento_ElHashContieneEsteElemento();
   pa2m_nuevo_grupo("Quitar de tabla de hash");
   UnaTablaDeHash_SeEliminaUnElemento_ElHashQuedaSinEseElemento();
+  UnaTablaDeHash_SeEliminaUnElementoYtieneUnProximo_ElHashQuedaSinEseElemento();
   return pa2m_mostrar_reporte();
 }
