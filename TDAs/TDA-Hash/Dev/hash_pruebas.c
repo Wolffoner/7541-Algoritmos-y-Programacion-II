@@ -121,6 +121,58 @@ void UnaTablaDeHash_SeEliminaUnElementoYtieneUnProximo_ElHashQuedaSinEseElemento
   hash_destruir(tabla);
 }
 
+bool mostrar_claves(hash_t* hash, const char* clave, void* aux){
+  if(!clave)
+    return true;
+  aux = aux;
+  hash = hash;
+  printf("- Clave: %s\n", clave);
+  return false;
+}
+
+void UnaTablaHash_SiSeIteraConElIteradorIntero_LoRecorre(){
+  hash_t* tabla = hash_crear(NULL, 3);
+  char* clave1 = "aa";
+  void* elemento1 = (void*)0xBEBECAF1;
+  char* clave2 = "hh";
+  void* elemento2 = (void*)0xBEBECAF1;
+  char* clave3 = "dd";
+  void* elemento3 = (void*)0xBEBECAF1;
+  hash_insertar(tabla, clave1, elemento1);
+  hash_insertar(tabla, clave2, elemento2);
+  hash_insertar(tabla, clave3, elemento3);
+  size_t test = hash_con_cada_clave(tabla, mostrar_claves, NULL);
+  pa2m_afirmar(test == 3, "Iterador recorrio el hash");
+  hash_destruir(tabla);
+}
+
+void destructor(void* elemento){
+  if(elemento){
+    free(elemento);
+  }
+}
+
+void UnaTablaHash_ConDestructor_EliminaCorrectamente(){
+  hash_t* tabla = hash_crear(destructor, 3);
+  char* clave1 = "aa";
+  void* elemento1 = calloc(1, sizeof(int));
+  if(!elemento1)
+    return;
+  char* clave2 = "hh";
+  void* elemento2 = calloc(1, sizeof(int));
+  if(!elemento2){
+    free(elemento1);
+    return;
+  }
+  hash_insertar(tabla, clave1, elemento1);
+  hash_insertar(tabla, clave2, elemento2);
+  int test = hash_quitar(tabla, clave1);
+  pa2m_afirmar(test == 0, "Se pudo eliminar el elemento con un destructor");
+  void* elem = hash_obtener(tabla, clave2);
+  pa2m_afirmar( elem == elemento2, "El Segundo elemento agregado sigue en el hash");
+  hash_destruir(tabla);
+}
+
 int main(){
   pa2m_nuevo_grupo("Creacion de tabla de hash");
   CrearUnHash_ConCapacidadMenorATres_CreaUnHashConCapacidadTres();
@@ -139,5 +191,8 @@ int main(){
   pa2m_nuevo_grupo("Quitar de tabla de hash");
   UnaTablaDeHash_SeEliminaUnElemento_ElHashQuedaSinEseElemento();
   UnaTablaDeHash_SeEliminaUnElementoYtieneUnProximo_ElHashQuedaSinEseElemento();
+  UnaTablaHash_ConDestructor_EliminaCorrectamente();
+  pa2m_nuevo_grupo("Iterador Interno");
+  UnaTablaHash_SiSeIteraConElIteradorIntero_LoRecorre();
   return pa2m_mostrar_reporte();
 }
