@@ -1,5 +1,6 @@
 #include "hash.h"
 #include <stdio.h>
+#include <string.h>
 #include "pa2mm.h"
 
 void CrearUnHash_ConCapacidadMenorATres_CreaUnHashConCapacidadTres(){
@@ -108,9 +109,9 @@ void UnaTablaDeHash_SeEliminaUnElemento_ElHashQuedaSinEseElemento(){
 
 void UnaTablaDeHash_SeEliminaUnElementoYtieneUnProximo_ElHashQuedaSinEseElemento(){
   hash_t* tabla = hash_crear(NULL, 3);
-  char* clave1 = "aa";
+  char* clave1 = "bb";
   void* elemento1 = (void*)0xBEBECAF1;
-  char* clave2 = "hh";
+  char* clave2 = "dd";
   void* elemento2 = (void*)0xBEBECAF1;
   hash_insertar(tabla, clave1, elemento1);
   hash_insertar(tabla, clave2, elemento2);
@@ -154,7 +155,7 @@ void destructor(void* elemento){
 
 void UnaTablaHash_ConDestructor_EliminaCorrectamente(){
   hash_t* tabla = hash_crear(destructor, 3);
-  char* clave1 = "aa";
+  char* clave1 = "bb";
   void* elemento1 = calloc(1, sizeof(int));
   if(!elemento1)
     return;
@@ -170,6 +171,18 @@ void UnaTablaHash_ConDestructor_EliminaCorrectamente(){
   pa2m_afirmar(test == 0, "Se pudo eliminar el elemento con un destructor");
   void* elem = hash_obtener(tabla, clave2);
   pa2m_afirmar( elem == elemento2, "El Segundo elemento agregado sigue en el hash");
+  hash_destruir(tabla);
+}
+
+void a500(){
+  hash_t* tabla = hash_crear(destructor, 3);
+  char clave_string[20];
+  for(int clave = 1;clave <= 500 ;clave++){
+    sprintf(clave_string, "%i", clave);
+     hash_insertar(tabla, clave_string, NULL);
+  }
+  size_t test = hash_cantidad(tabla);
+  pa2m_afirmar(test == 40, "500");
   hash_destruir(tabla);
 }
 
@@ -194,5 +207,6 @@ int main(){
   UnaTablaHash_ConDestructor_EliminaCorrectamente();
   pa2m_nuevo_grupo("Iterador Interno");
   UnaTablaHash_SiSeIteraConElIteradorIntero_LoRecorre();
+  a500();
   return pa2m_mostrar_reporte();
 }
