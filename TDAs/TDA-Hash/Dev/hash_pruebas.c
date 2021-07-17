@@ -174,15 +174,15 @@ void UnaTablaHash_ConDestructor_EliminaCorrectamente(){
   hash_destruir(tabla);
 }
 
-void a500(){
+void Hash_Inserta500Claves_InsertaCorrectamente(){
   hash_t* tabla = hash_crear(destructor, 3);
   char clave_string[20];
-  for(int clave = 1;clave <= 500 ;clave++){
+  for(int clave = 1; clave <= 500; clave++){
     sprintf(clave_string, "%i", clave);
-     hash_insertar(tabla, clave_string, NULL);
+    hash_insertar(tabla, clave_string, NULL);
   }
   size_t test = hash_cantidad(tabla);
-  pa2m_afirmar(test == 40, "500");
+  pa2m_afirmar(test == 500, "Insetadas 500 claves");
   hash_destruir(tabla);
 }
 
@@ -207,6 +207,6 @@ int main(){
   UnaTablaHash_ConDestructor_EliminaCorrectamente();
   pa2m_nuevo_grupo("Iterador Interno");
   UnaTablaHash_SiSeIteraConElIteradorIntero_LoRecorre();
-  a500();
+  Hash_Inserta500Claves_InsertaCorrectamente();
   return pa2m_mostrar_reporte();
 }
