@@ -29,8 +29,8 @@ size_t funcion_hash(const char* clave, size_t capacidad_tabla){
   size_t auxiliar = 0;
   for(int i = 0; i < strlen(clave); i++)
     auxiliar += clave[i];
-  size_t posicion = (size_t)(auxiliar%capacidad_tabla);
-  return posicion;
+  
+  return (size_t)(auxiliar%capacidad_tabla);
 }
 
 /*
@@ -42,7 +42,7 @@ bool excede_factor_carga(size_t capacidad_tabla, size_t cant_ocupadas){
   bool excedido = false;
   if(cant_ocupadas == 0)
     return excedido;
-  double resultado = capacidad_tabla%cant_ocupadas;
+  double resultado = (double)cant_ocupadas/capacidad_tabla;
   if(resultado >= FACTOR_CARGA)
     excedido = true;
   return excedido;
@@ -54,11 +54,11 @@ bool excede_factor_carga(size_t capacidad_tabla, size_t cant_ocupadas){
  *  retorna el puntero a la tabla vacia creada.
 */
 nodo_hash_t** tabla_hash_crear(size_t capacidad){
-  nodo_hash_t** nodo_hash = calloc(1, (sizeof(nodo_hash_t*)*capacidad));
-  if(!nodo_hash)
+  nodo_hash_t** tabla_hash = calloc(1, (sizeof(nodo_hash_t*)*capacidad));
+  if(!tabla_hash)
     return NULL;
 
-  return nodo_hash;
+  return tabla_hash;
 }
 
 hash_t* hash_crear(hash_destruir_dato_t destruir_elemento, size_t capacidad_inicial){
@@ -71,6 +71,7 @@ hash_t* hash_crear(hash_destruir_dato_t destruir_elemento, size_t capacidad_inic
 
   hash->capacidad_tabla = capacidad_inicial;
   hash->destructor = destruir_elemento;
+  hash->cant_ocupadas = 0;
   hash->tabla_hash = tabla_hash_crear(capacidad_inicial);
   if(!hash->tabla_hash){
     free(hash);
@@ -88,7 +89,7 @@ nodo_hash_t* nodo_hash_crear(const char* clave, void* elemento){
   nodo_hash_t* auxiliar = calloc(1, sizeof(nodo_hash_t));
   if(!auxiliar)
     return NULL;
-  char* clave_aux = calloc(1, sizeof(strlen(clave)));
+  char* clave_aux = calloc(1, sizeof(strlen(clave)+1));
   if(!clave_aux){
     free(auxiliar);
     return NULL;
@@ -104,32 +105,43 @@ nodo_hash_t* nodo_hash_crear(const char* clave, void* elemento){
  * Se pasan por parametros la tabla de hash, la cantidad de celdas ocupadas, la capacidad de la tabla, la clave y el elemento,
  * Retorna VALIDO si logra insertarlo o en caso contrario retorna ERROR.
  */
-int nodo_hash_insertar(hash_t* hash, nodo_hash_t** tabla_hash, size_t* cant_ocupadas, size_t capacidad, const char* clave, void* elemento){
+int nodo_hash_insertar(nodo_hash_t** tabla_hash, size_t* cant_ocupadas, size_t capacidad, const char* clave, void* elemento, hash_destruir_dato_t destructor){
+  if(!tabla_hash){
+    return ERROR;
+  }
   size_t posicion = funcion_hash(clave, capacidad);
   if(tabla_hash[posicion] && strcmp(tabla_hash[posicion]->clave, clave) == 0){
-    if(hash->destructor){
-      hash->destructor(tabla_hash[posicion]->valor);
+    if(destructor){
+      destructor(tabla_hash[posicion]->valor);
     }
     tabla_hash[posicion]->valor = elemento;
     return VALIDO;
   }
+
   nodo_hash_t* nodo = nodo_hash_crear(clave, elemento);
   if(!nodo)
     return ERROR;
 
-  if(!tabla_hash[posicion]){
-    tabla_hash[posicion] = nodo;
-  }else{
-    while(tabla_hash[posicion])
+  if(tabla_hash[posicion] && strcmp(tabla_hash[posicion]->clave, clave) != 0){
+    while(tabla_hash[posicion]){
       if(posicion == capacidad-1){
         posicion = 0;
       } else {
         posicion++;
       }
+    }
     tabla_hash[posicion] = nodo;
+    (*cant_ocupadas)++;
+    return VALIDO;
   }
-  (*cant_ocupadas)++;
-  return VALIDO;
+
+  if(!tabla_hash[posicion]){
+    tabla_hash[posicion] = nodo;
+    (*cant_ocupadas)++;
+    return VALIDO;
+  }
+
+  return ERROR;
 }
 
 /*
@@ -148,19 +160,19 @@ void reemplazar_tabla(nodo_hash_t*** tabla, nodo_hash_t** tabla_auxiliar){
  * retorna true si pudo completa el rehash o en caso contrario retorna false.
  */
 bool rehash_tabla(hash_t* hash){
-  nodo_hash_t** tabla_auxiliar = tabla_hash_crear(hash->capacidad_tabla*2);
+  size_t capacidad_doble = (hash->capacidad_tabla) * 2;
+  nodo_hash_t** tabla_auxiliar = tabla_hash_crear((hash->capacidad_tabla)*2);
   size_t cantidad_ocupadas = 0;
   if(!tabla_auxiliar)
     return false;
-
   for(int i = 0; i < hash->capacidad_tabla; i++){
     if(hash->tabla_hash[i]){
-      nodo_hash_insertar(hash, tabla_auxiliar, &cantidad_ocupadas, hash->capacidad_tabla*2, hash->tabla_hash[i]->clave, hash->tabla_hash[i]->valor);
+      nodo_hash_insertar(tabla_auxiliar, &cantidad_ocupadas, capacidad_doble, hash->tabla_hash[i]->clave, hash->tabla_hash[i]->valor, hash->destructor);
       free(hash->tabla_hash[i]->clave);
       free(hash->tabla_hash[i]);
     }
   }
-  hash->capacidad_tabla = hash->capacidad_tabla*2;
+  hash->capacidad_tabla = (hash->capacidad_tabla)*2;
   hash->cant_ocupadas = cantidad_ocupadas;
   reemplazar_tabla(&hash->tabla_hash, tabla_auxiliar);
   return true;
@@ -174,7 +186,7 @@ int hash_insertar(hash_t* hash, const char* clave, void* elemento){
     if(!rehasheo)
       return ERROR;
   }
-  return nodo_hash_insertar(hash, hash->tabla_hash, &hash->cant_ocupadas, hash->capacidad_tabla, clave, elemento);
+  return nodo_hash_insertar(hash->tabla_hash, &hash->cant_ocupadas, hash->capacidad_tabla, clave, elemento, hash->destructor);
 }
 
 /*
@@ -191,7 +203,7 @@ void modifica_posicion_proxima(size_t posicion_final, size_t posicion, size_t* p
 }
 
 int hash_quitar(hash_t* hash, const char* clave){
-  if(!hash || !clave)
+  if(!hash)
     return ERROR;
   size_t posicion = funcion_hash(clave, hash->capacidad_tabla);
   size_t posicion_proxima = 0;
@@ -229,9 +241,11 @@ int hash_quitar(hash_t* hash, const char* clave){
       if(posicion_adecuada == posicion_proxima){
         esta_correcto = true;
       } else {
-        hash->tabla_hash[posicion] = hash->tabla_hash[posicion_proxima];
-        hash->tabla_hash[posicion_proxima] = NULL;
-        posicion = posicion_proxima;
+        if(!hash->tabla_hash[posicion]){
+          hash->tabla_hash[posicion] = hash->tabla_hash[posicion_proxima];
+          hash->tabla_hash[posicion_proxima] = NULL;
+          posicion = posicion_proxima;
+        }
       }
       if(posicion_proxima == posicion_final){
           posicion_proxima = 0;
