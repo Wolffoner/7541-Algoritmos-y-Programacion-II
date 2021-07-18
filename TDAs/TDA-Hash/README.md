@@ -21,7 +21,7 @@ Este TDA `(Tipo de Dato Abstracto)` Es una tabla de hash un tipo de estructura d
 
 ## Tipos de Hash :scroll:
 
-### Hash Cerrado
+### Hash Cerrado :notebook_with_decorative_cover:
 
 El hash cerrado o direccionamiento abierto, es una forma de resolver las colisiones donde guarda todos los pares (clave-valor) dentro de su misma tabla, en caso de que los elementos superen el factor de carga de la tabla se usa un rehasheo que dependiendo de como este implementado se agranda el tamano de la tabla para que puedan seguir insertando valores.
 
@@ -41,7 +41,7 @@ Es la fraccion ocupada de la tabla y es un numero entre 0 y 1 si esta vacia o si
 
 El rehash se utiliza cuando nuestro factor de carga supera cierta cantidad, es una operacion bastante costosa ya que lo que hace justamente es agrandar el tamano de nuestra tabla e insertar todos los valores nuevamente, ya que nuestra funcion de hash depende justamente del tamano de la tabla.
 
-### Hash Abierto
+### Hash Abierto  :books:
 
 El hash abierto o direccionamiento cerrado, es otra forma de resolver las colisiones en este caso en vez de guardar nuestros pares (clave-valor) dentro de una tabla, vamos guardandolo dentro de una tabla con listas donde dependiendo de la funcion de hash se va anadiendo los elementos a la lista indicada. no es necesario agrandar nuestro tamano de tabla ya que con las listas integradas a la tabla se van agregando mas elementos sin la necesitad de agrandar la tabla.
 
