@@ -27,17 +27,17 @@ El hash cerrado o direccionamiento abierto, es una forma de resolver las colisio
 
 <img src="./imgs/cerrado.png">
 
-- Funcion de hash
+- ***Funcion de hash***
 
 Una funcion de hash nos modifica nuestro elemento para convertirlo en otro elemento, en este caso nos lo convierte en un numero que sera la posicion ideal donde sera insertado nuestro elemento.
 
 <img src="./imgs/funcion_hash.png">
 
-- Factor de Carga
+- ***Factor de Carga***
 
 Es la fraccion ocupada de la tabla y es un numero entre 0 y 1 si esta vacia o si esta llena respectivamente, en nuestra implementacion cuando nuestro factor de carga excede los 0.75 se utiliza el rehash.
 
-- Rehashing
+- ***Rehashing***
 
 El rehash se utiliza cuando nuestro factor de carga supera cierta cantidad, es una operacion bastante costosa ya que lo que hace justamente es agrandar el tamano de nuestra tabla e insertar todos los valores nuevamente, ya que nuestra funcion de hash depende justamente del tamano de la tabla.
 
