@@ -1,10 +1,9 @@
 #include "util.h"
 #include <stdlib.h>
-
 #include <string.h>
+
 #define FIN_STRING '\0'
 #define VACIO ""
-
 const size_t TAMANIO_STRING = 512;
 
 size_t vtrlen(void* ptr){
@@ -41,12 +40,18 @@ void vtrfree(void* ptr){
     int i = 0;
     void** ptr_aux = (void**)ptr;
     while(ptr_aux[i] != NULL){
-        free(ptr_aux[i]);
+        if(strcmp(ptr_aux[i], "") != 0){
+            free(ptr_aux[i]);
+        }
         i++;
     }
     free(ptr);
 }
 
+/*
+*   Pre:
+*   Post: Concatena a str_div un char dependiendo de la posicion del str.
+*/
 char* get_string(const char* str, int i, char separador, char* str_div){
     char* str_aux = NULL;
     size_t j = 0;
@@ -89,7 +94,6 @@ char** split(const char* str, char separador){
         str_div = VACIO;
     }
     vector_str = (char**)vtradd(vector_str, str_div);
-    
     return vector_str;
 }
 
@@ -108,11 +112,10 @@ char* fgets_alloc(FILE* archivo){
     while(fgets(str+bytes_leidos, (int)(TAMANIO_STRING), archivo)){
     size_t leido = strlen(str+bytes_leidos);
         if(leido > 0 && *(str+bytes_leidos+leido-1) == '\n'){
-            *(str+bytes_leidos+leido-1) = 0;
             return str;
         } else {
-            contador++;
             char* str_aux = realloc(str, TAMANIO_STRING*(contador+1));
+            contador++;
             if(!str_aux){
                 free(str);
                 return NULL;
@@ -129,7 +132,7 @@ char* fgets_alloc(FILE* archivo){
 }
 
 void fclosen(FILE* archivo){
-    if(!archivo){
+    if(archivo){
         fclose(archivo);
     }
 }

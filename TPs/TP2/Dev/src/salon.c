@@ -1,11 +1,14 @@
+#include <stdlib.h>
+#include <string.h>
+#include "entrenador.h"
 #include "salon.h"
 
 struct _salon_t{
-    //???
+    entrenador_t** entrenadres;
 };
 
 salon_t* salon_leer_archivo(const char* nombre_archivo){
-    return NULL;
+  return NULL;
 }
 
 int salon_guardar_archivo(salon_t* salon, const char* nombre_archivo){
