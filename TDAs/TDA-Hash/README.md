@@ -12,7 +12,7 @@ Facultad de Ingeniería, Universidad de Buenos Aires
 
 ## Introducción :raised_hand:
 
-Este TDA `(Tipo de Dato Abstracto)` Es una tabla de hash un tipo de estructura de datos que consiste en una estructura donde guardaremos los pares ***clave y valor***, el cual segun la funcion de hash brindada va asignando la posicion adecuada donde se encontrara este dato. Esto nos permite tener una complejidad algoritimica en el caso del mejor caso: `O(log 1)` y en el peor de los casos `O(n)`, dentro de sus primtivas de busqueda, insercion y borrado.
+Este TDA `(Tipo de Dato Abstracto)` Es una tabla de hash un tipo de estructura de datos que consiste en una estructura donde guardaremos los pares ***clave y valor***, el cual segun la funcion de hash brindada va asignando la posicion adecuada donde se encontrara este dato. Esto nos permite tener una complejidad algoritimica en el caso del mejor caso: `O(1)` y en el peor de los casos `O(n)`, dentro de sus primtivas de busqueda, insercion y borrado.
 
 
 ## Objetivo :heavy_check_mark:
