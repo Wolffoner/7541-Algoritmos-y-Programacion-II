@@ -10,8 +10,10 @@
 #define VELOCIDAD_INICIAL 5
 #define DEFENSA_INICIAL 5
 #define ERROR -1
+#define VALIDO 0
 
 typedef struct _pokemon_t pokemon_t;
+
 
 pokemon_t* crea_pokemon(char* nombre);
 

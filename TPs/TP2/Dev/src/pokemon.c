@@ -12,21 +12,23 @@ struct _pokemon_t{
 pokemon_t* crea_pokemon_inicializado(char* nombre, size_t nivel, size_t fuerza, size_t inteligencia, size_t velocidad, size_t defensa){
   if(!nombre)
     return NULL;
+
   char* nombre_aux = calloc(1, sizeof(strlen(nombre))+1);
   if(!nombre_aux)
     return NULL;
+
   pokemon_t* pokemon = calloc(1, sizeof(pokemon_t));
   if(!pokemon){
     free(nombre_aux);
     return NULL;
   }
-  strcpy(nombre_aux, nombre);
+  strncpy(nombre_aux, nombre, sizeof(strlen(nombre)+1));
   pokemon->nombre = nombre_aux;
+  pokemon->nivel = nivel;
   pokemon->fuerza = fuerza;
   pokemon->inteligencia = inteligencia;
   pokemon->velocidad = velocidad;
   pokemon->defensa = defensa;
-  pokemon->nivel = nivel;
   return pokemon;
 }
 
