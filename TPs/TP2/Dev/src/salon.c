@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "entrenador.h"
+#include "lista.h"
 #include "salon.h"
 #include "util.h"
 #include "pokemon.h"
@@ -78,14 +79,45 @@ salon_t* salon_leer_archivo(const char* nombre_archivo){
     return salon;
 }
 
+bool guardar_pokemones(void* _pokemon, void* _file){
+  if(!_pokemon || !_file)
+    return false;
+  pokemon_t* pokemon = (pokemon_t*) _pokemon;
+  FILE* file = (FILE*) _file;
+  fprintf(file, "%s;%i;%i;%i;%i;%i\n",
+      obtener_nombre(pokemon),
+      obtener_nivel(pokemon),
+      obtener_fuerza(pokemon),
+      obtener_inteligencia(pokemon),
+      obtener_velocidad(pokemon),
+      obtener_defensa(pokemon));
+  return true;
+}
+
+bool guarda_entrenadores(void* _entrenador, void* _file){
+  if(!_entrenador || !_file)
+    return true;
+  entrenador_t* entrenador = (entrenador_t*) _entrenador;
+  FILE* file = (FILE*) _file;
+  fprintf(file, "%s;%i\n", obtener_nombre_entrenador(entrenador), cantidad_victorias(entrenador));
+  lista_con_cada_elemento(obtener_lista_pokemon(entrenador), guardar_pokemones, file);
+  return false;
+}
+
 int salon_guardar_archivo(salon_t* salon, const char* nombre_archivo){
-    return -1;
+  if(!salon || !nombre_archivo)
+    return ERROR;
+  FILE* file = fopen(nombre_archivo, "w");
+  if(!file)
+    return ERROR;
+  abb_con_cada_elemento(salon->entrenadores, ABB_RECORRER_INORDEN, guarda_entrenadores , file);
+  fclosen(file);
+  return VALIDO;
 }
 
 salon_t* salon_agregar_entrenador(salon_t* salon, entrenador_t* entrenador){
     return NULL;
 }
-
 
 lista_t* salon_filtrar_entrenadores(salon_t* salon , bool (*f)(entrenador_t*, void*), void* extra){
     return NULL;

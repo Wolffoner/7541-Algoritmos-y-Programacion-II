@@ -30,6 +30,8 @@ int liberar_pokemon(entrenador_t* entrenador, char* nombre_pokemon);
 
 pokemon_t* obtener_pokemon(entrenador_t* entrenador, char* nombre_pokemon);
 
+lista_t* obtener_lista_pokemon(entrenador_t* entrenador);
+
 int agregar_pokemon(entrenador_t* entrenador, pokemon_t* pokemon);
 
 void destruye_entrenador(entrenador_t* entrenador);

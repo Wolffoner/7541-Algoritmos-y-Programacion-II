@@ -13,7 +13,7 @@ pokemon_t* crea_pokemon_inicializado(char* nombre, size_t nivel, size_t fuerza, 
   if(!nombre)
     return NULL;
 
-  char* nombre_aux = calloc(1, sizeof(strlen(nombre))+1);
+  char* nombre_aux = calloc(1, strlen(nombre)+1);
   if(!nombre_aux)
     return NULL;
 
@@ -22,7 +22,7 @@ pokemon_t* crea_pokemon_inicializado(char* nombre, size_t nivel, size_t fuerza, 
     free(nombre_aux);
     return NULL;
   }
-  strncpy(nombre_aux, nombre, sizeof(strlen(nombre)+1));
+  strcpy(nombre_aux, nombre);
   pokemon->nombre = nombre_aux;
   pokemon->nivel = nivel;
   pokemon->fuerza = fuerza;

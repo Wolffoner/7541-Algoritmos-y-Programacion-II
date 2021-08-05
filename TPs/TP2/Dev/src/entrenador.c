@@ -12,7 +12,7 @@ struct _entrenador_t{
 entrenador_t* crea_entrenador(char* nombre){
   if(!nombre)
     return NULL;
-  char* nombre_aux = calloc(1, sizeof(strlen(nombre))+1);
+  char* nombre_aux = calloc(1, strlen(nombre)+1);
   if(!nombre_aux)
     return NULL;
   entrenador_t* entrenador = calloc(1, sizeof(entrenador_t));
@@ -26,7 +26,7 @@ entrenador_t* crea_entrenador(char* nombre){
     free(entrenador);
     return NULL;
   }
-  strncpy(nombre_aux, nombre, sizeof(strlen(nombre)+1));
+  strcpy(nombre_aux, nombre);
   entrenador->nombre = nombre_aux;
   entrenador->victorias = 0;
   entrenador->cant_pokemones = 0;
@@ -95,6 +95,12 @@ int liberar_pokemon(entrenador_t* entrenador, char* nombre_pokemon){
     }
   }
   return ERROR;
+}
+
+lista_t* obtener_lista_pokemon(entrenador_t* entrenador){
+  if(!entrenador)
+    return NULL;
+  return entrenador->pokemones;
 }
 
 int modificar_victorias(entrenador_t* entrenador, size_t victorias){
