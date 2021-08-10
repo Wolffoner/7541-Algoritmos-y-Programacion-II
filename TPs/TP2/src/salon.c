@@ -21,12 +21,13 @@ struct _salon_t{
     size_t cant_entrenadores;
     hash_t* comandos;
 };
+
 /***********************************************************************
                                COMANDOS 
 ***********************************************************************/
 
 /* 
- * concatena todos los entrenadores dentro del salon al resultado
+ * Concatena todos los entrenadores dentro del salon al resultado
  * si el entrenador es nulo retorna true, si es distinto de nulo retorna false;
 */
 bool imprimir_entrenadores(void* _entrenador, void* _resultado){
@@ -44,7 +45,7 @@ bool imprimir_entrenadores(void* _entrenador, void* _resultado){
 }
 
 /* 
- * concatena todos los entrenadores dentro del salon al resultado segun la cantidad_victorias minima
+ * Concatena todos los entrenadores dentro del salon al resultado segun la cantidad_victorias minima
  * si el entrenador es nulo retorna true, si es distinto de nulo retorna false;
 */
 bool imprimir_entrenadores_segun_victorias(void* _entrenador, void* _lista){
@@ -63,7 +64,7 @@ bool imprimir_entrenadores_segun_victorias(void* _entrenador, void* _lista){
 }
 
 /* 
- * concatena todos los entrenadores dentro del salon al resultado si el entrenador tiene el pokemon.
+ * Concatena todos los entrenadores dentro del salon al resultado si el entrenador tiene el pokemon.
  * si el entrenador es nulo retorna true, si es distinto de nulo retorna false;
 */
 bool imprimir_entrenadores_segun_pokemon(void* _entrenador, void* _lista){
@@ -120,7 +121,7 @@ void listar_entrenadores(void* _salon, char** argumentos, void* resultado){
 }
 
 /* 
- * concatena un pokemon con sus respectivas stats a resultado
+ * Concatena un pokemon con sus respectivas stats a resultado
  * Si el pokemon es nulo retorna false, si es valido retorna true.
 */
 bool imprimir_pokemones(void* _pokemon, void* _resultado){
@@ -154,7 +155,7 @@ bool imprimir_pokemones(void* _pokemon, void* _resultado){
 }
 
 /* 
- * imprime pokemones segun el entrenador brindado
+ * Imprime pokemones segun el entrenador brindado
  * Si el _entrenador es nulo o fue encontrado retorna true, si es valido pero no fue encontrado retorna false.
 */
 bool imprimir_pokemones_segun_entrenador(void* _entrenador, void* _lista){
@@ -611,7 +612,9 @@ void destruye_entrenadores(void* _entrenador){
   if(entrenador)
     destruye_entrenador(entrenador);
 }
-
+/*
+ * verifica si el entrenador esta duplicado devuelve false para seguir avanzando o true parar parar la iteracion, se modifica la variable duplicado.
+ */
 bool verifica_entrenador_duplicado(void* _entrenador1, void* _lista){
   if(!_entrenador1 || !_lista){
     return true;
@@ -659,6 +662,30 @@ int insercion_entrenadores(salon_t* salon, entrenador_t* entrenador){
   lista_destruir(lista_aux);
   return insercion;
 }
+
+/*
+ * Procesa el comando y dependiendo del comando obtenido se ejecuta el comando, si comando es nulo, resultado concatena ERROR_RESULTADO
+ */
+void procesar_comando(salon_t* salon, const char* comando, char* resultado) {
+  if(!salon || !comando || !resultado)
+    return;
+  char** argumentos = split(comando, ':');
+  if(!argumentos){
+    return;
+  }
+  comando_t* comando_aux = hash_obtener(salon->comandos, argumentos[0]);
+  if(comando_aux){
+    ejecutar_comando_t ejecutar = obtener_ejecutar_comando(comando_aux);
+    ejecutar((void*)salon, argumentos, (void*)resultado);
+  } else {
+    strcat(resultado, ERROR_RESULTADO);
+  }
+  vtrfree(argumentos);
+}
+
+/******************************************************
+ *                PRIMITIVAS SALON
+ *****************************************************/
 
 salon_t* salon_leer_archivo(const char* nombre_archivo){
   FILE* file = fopen(nombre_archivo, "r");
@@ -792,23 +819,6 @@ lista_t* salon_filtrar_entrenadores(salon_t* salon , bool (*f)(entrenador_t*, vo
   }
   free(entrenadores);
   return lista;
-}
-// procesar comando
-void procesar_comando(salon_t* salon, const char* comando, char* resultado) {
-  if(!salon || !comando || !resultado)
-    return;
-  char** argumentos = split(comando, ':');
-  if(!argumentos){
-    return;
-  }
-  comando_t* comando_aux = hash_obtener(salon->comandos, argumentos[0]);
-  if(comando_aux){
-    ejecutar_comando_t ejecutar = obtener_ejecutar_comando(comando_aux);
-    ejecutar((void*)salon, argumentos, (void*)resultado);
-  } else {
-    strcat(resultado, ERROR_RESULTADO);
-  }
-  vtrfree(argumentos);
 }
 
 char* salon_ejecutar_comando(salon_t* salon, const char* comando){
