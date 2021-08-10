@@ -12,7 +12,7 @@ struct _entrenador_t{
 entrenador_t* crea_entrenador(char* nombre){
   if(!nombre)
     return NULL;
-  char* nombre_aux = calloc(1, strlen(nombre)+1);
+  char* nombre_aux = malloc((strlen(nombre))+1);
   if(!nombre_aux)
     return NULL;
   entrenador_t* entrenador = calloc(1, sizeof(entrenador_t));
@@ -65,7 +65,10 @@ pokemon_t* obtener_pokemon(entrenador_t* entrenador, char* nombre_pokemon){
     }
   }
   lista_iterador_destruir(iterador);
-  return pokemon_buscado;
+  if(encontrado){
+    return pokemon_buscado;
+  }
+  return NULL;
 }
 
 int liberar_pokemon(entrenador_t* entrenador, char* nombre_pokemon){

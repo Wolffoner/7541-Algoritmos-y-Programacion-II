@@ -9,11 +9,11 @@ struct _pokemon_t{
   size_t defensa;
 };
 
-pokemon_t* crea_pokemon_inicializado(char* nombre, size_t nivel, size_t fuerza, size_t inteligencia, size_t velocidad, size_t defensa){
+pokemon_t* crea_pokemon_inicializado(char* nombre, size_t nivel, size_t defensa, size_t fuerza, size_t inteligencia, size_t velocidad){
   if(!nombre)
     return NULL;
 
-  char* nombre_aux = calloc(1, strlen(nombre)+1);
+  char* nombre_aux = malloc((strlen(nombre))+1);
   if(!nombre_aux)
     return NULL;
 

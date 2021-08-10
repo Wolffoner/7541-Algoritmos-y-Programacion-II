@@ -104,7 +104,7 @@ nodo_hash_t* nodo_hash_crear(const char* clave, void* elemento){
   nodo_hash_t* auxiliar = calloc(1, sizeof(nodo_hash_t));
   if(!auxiliar)
     return NULL;
-  char* clave_aux = calloc(1, sizeof(strlen(clave)+1));
+  char* clave_aux = malloc((strlen(clave))+1);
   if(!clave_aux){
     free(auxiliar);
     return NULL;

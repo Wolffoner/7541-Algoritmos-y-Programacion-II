@@ -12,9 +12,8 @@
 * Post: retorna un puntero con memoria reservado a un nodo_t
 */
 nodo_t* nodo_crear(){
-    nodo_t* nodo = malloc(sizeof(nodo_t));
+    nodo_t* nodo = calloc(1, sizeof(nodo_t));
     if(!nodo){
-        free(nodo);
         return NULL;
     }
     return nodo;
@@ -38,7 +37,7 @@ nodo_t* nodo_set_elemento(nodo_t* nodo, void* elemento){
 */
 void nodo_destruir(nodo_t* nodo){
     if(!nodo)
-        return;
+      return;
     nodo_t* nodo_proximo = nodo->siguiente;
     free(nodo);
     nodo_destruir(nodo_proximo);
@@ -56,8 +55,8 @@ lista_t* inicializar_lista_creada(lista_t* lista){
 }
 
 lista_t* lista_crear(){
-    lista_t* lista_creada = (lista_t*)malloc(sizeof(lista_t));
-    if (!lista_creada)
+    lista_t* lista_creada = (lista_t*)calloc(1,sizeof(lista_t));
+    if(!lista_creada)
         return NULL;
     lista_creada = inicializar_lista_creada(lista_creada);
     return lista_creada;
@@ -67,10 +66,8 @@ int lista_insertar(lista_t* lista, void* elemento){
     if(!lista)
         return NO_PUDO_INSERTAR;
     nodo_t* nodo_aux = nodo_crear();
-    if(!nodo_aux){
-        free(nodo_aux);
-        return NO_PUDO_INSERTAR;
-    }
+    if(!nodo_aux)
+      return NO_PUDO_INSERTAR;
     nodo_aux = nodo_set_elemento(nodo_aux, elemento);
     if(lista_vacia(lista)){
         lista->nodo_fin = nodo_aux;
@@ -105,10 +102,8 @@ int lista_insertar_en_posicion(lista_t* lista, void* elemento, size_t posicion){
         lista_insertar(lista, elemento);
     } else {
         nodo_t* nodo = nodo_crear();
-        if(!nodo){
-            free(nodo);
-            return NO_PUDO_INSERTAR;
-        }
+        if(!nodo)
+          return NO_PUDO_INSERTAR;
         nodo = nodo_set_elemento(nodo, elemento);
         nodo_insertar_en_posicion(&lista->nodo_inicio, nodo, posicion);
         lista->cantidad++;
@@ -127,7 +122,7 @@ nodo_t* nodo_borrar(nodo_t* nodo, size_t cantidad_nodos){
 
 int lista_borrar(lista_t* lista){
     if(lista_vacia(lista)){
-        return NO_PUDO_BORRAR;
+      return NO_PUDO_BORRAR;
     }
     if(lista->cantidad == 1){
         free(lista->nodo_inicio);
@@ -136,8 +131,7 @@ int lista_borrar(lista_t* lista){
     } else {
         nodo_t* nodo_aux = nodo_borrar(lista->nodo_inicio, (lista->cantidad - 1));
         if(!nodo_aux){
-            free(nodo_aux);
-            return NO_PUDO_BORRAR;
+          return NO_PUDO_BORRAR;
         }
         lista->nodo_fin = nodo_aux;
     }
@@ -240,10 +234,8 @@ lista_iterador_t* lista_iterador_crear(lista_t* lista){
     if(!lista)
         return NULL;
     lista_iterador_t* iterador_nuevo = malloc(sizeof(lista_iterador_t));
-    if(!iterador_nuevo){
-        free(iterador_nuevo);
+    if(!iterador_nuevo)
         return NULL;
-    }
     iterador_nuevo->lista = lista;
     iterador_nuevo->corriente = lista->nodo_inicio;
     return iterador_nuevo;

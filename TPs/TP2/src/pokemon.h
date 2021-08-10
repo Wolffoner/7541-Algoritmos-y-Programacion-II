@@ -17,7 +17,7 @@ typedef struct _pokemon_t pokemon_t;
 
 pokemon_t* crea_pokemon(char* nombre);
 
-pokemon_t* cargar_pokemon(char* nombre, size_t nivel, size_t fuerza, size_t inteligencia, size_t velocidad, size_t defensa);
+pokemon_t* cargar_pokemon(char* nombre, size_t nivel, size_t defensa, size_t fuerza, size_t inteligencia, size_t velocidad);
 
 char* obtener_nombre(pokemon_t* pokemon);
 
