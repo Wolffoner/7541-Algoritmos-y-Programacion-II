@@ -53,7 +53,7 @@ void salonGuardar_SiNombreArchivoNulo_NoPuedeGuardar(){
 
 void salonGuardar_Guarda_GuardaCorrectmaente(){
   salon_t* salon = salon_leer_archivo("./salones/salon_1e_1p.txt");
-  char* ruta = "./archivos/prueba1.txt";
+  char* ruta = "./salones/prueba1.txt";
   int test = salon_guardar_archivo(salon, ruta);
   pa2m_afirmar(test == 0, "Se pudo guardar archivo con exito.");
   salon_destruir(salon);
@@ -61,7 +61,7 @@ void salonGuardar_Guarda_GuardaCorrectmaente(){
 
 void salonGuardar_Guarda_GuardaCorrectmaente2Entrenadores(){
   salon_t* salon = salon_leer_archivo("./salones/salon_2e_2p.txt");
-  char* ruta = "./archivos/prueba2.txt";
+  char* ruta = "./salones/prueba2.txt";
   int test = salon_guardar_archivo(salon, ruta);
   pa2m_afirmar(test == 0, "Se pudo guardar archivo con 2 entrenadores con exito.");
   salon_destruir(salon);
@@ -126,18 +126,98 @@ void salonFiltrar_SalonDistintoNulo_SePuedeFiltrar(){
   salon_destruir(salon);
 }
 
-void salonEjecutar_EjecutaQuitarPokemon_SiTieneUnoSoloRetornaNull(){
-  salon_t* salon = salon_leer_archivo("./salones/salon_quitar.txt");
-  char* res = salon_ejecutar_comando(salon, "QUITAR:Mariano,Lapras");
-  pa2m_afirmar(!res, "No se puede quitar si le queda un solo pokemon.");
-  salon_destruir(salon);
-}
 void salonEjecutar_ComandoInvalido_RetornaNull(){
   salon_t* salon = salon_leer_archivo("./salones/salon_quitar.txt");
   char* res = salon_ejecutar_comando(salon, "EN");
   pa2m_afirmar(!res, "No se puede ejecutar comando Nulo.");
   salon_destruir(salon);
 }
+
+void salonEjecutar_SalonInvalido_RetornaNull(){
+  char* res = salon_ejecutar_comando(NULL, "EN");
+  pa2m_afirmar(!res, "No se puede ejecutar comando en un salon nulo.");
+}
+
+void salonEjecutar_EjecutaEntrenadores_RetornaEntrenadores(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "ENTRENADORES");
+  pa2m_afirmar(res, "Se puede obtener los entrenadores de un salon con exito.");
+  free(res);
+  salon_destruir(salon);
+}
+
+void salonEjecutar_EjecutaEntrenadoresPorPokemon_RetornaEntrenadoresPorPokemon(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "ENTRENADORES:pokemon,Jynx");
+  pa2m_afirmar(res, "Se puede obtener los entrenadores con un pokemon de un salon con exito.");
+  free(res);
+  salon_destruir(salon);
+}
+
+void salonEjecutar_EjecutaEntrenadoresPorVictorias_RetornaEntrenadoresPorVictorias(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "ENTRENADORES:victorias,50");
+  pa2m_afirmar(res, "Se puede obtener los entrenadores con cierta cantidad de victorias de un salon con exito.");
+  free(res);
+  salon_destruir(salon);
+}
+
+void salonEjecutar_Reglas_RetornaReglas(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "REGLAS");
+  pa2m_afirmar(res, "Se puede obtener las reglas de batalla con exito.");
+  free(res);
+  salon_destruir(salon);
+
+}
+
+void salonEjecutar_Equipo_RetornaEquipo(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "EQUIPO:Mariano");
+  pa2m_afirmar(res, "Se puede obtener equipo con exito.");
+  free(res);
+  salon_destruir(salon);
+}
+
+void salonEjecutar_EquipoDeEntrenadorFueraDelSalon_RetornaNull(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "EQUIPO:aab");
+  pa2m_afirmar(!res, "No existe entrenador en el salon, por lo que no tiene equipo.");
+  salon_destruir(salon);
+}
+
+void salonEjecutar_Comparar_Compara(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "COMPARAR:Mariano,Lucas,CLASICO");
+  pa2m_afirmar(res, "Se pueden comparar 2 entrenadores con exito.");
+  free(res);
+  salon_destruir(salon);
+}
+
+void salonEjecutar_AgregaPokemon_AgregaPokemon(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "AGREGAR_POKEMON:Lucas,Eeve,20,30,30,30,20");
+  pa2m_afirmar(res, "Se puede agregar pokemon con exito.");
+  free(res);
+  salon_destruir(salon);
+}
+
+void salonEjecutar_EjecutaQuitarPokemon_SiTieneUnoSoloRetornaNull(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_quitar.txt");
+  char* res = salon_ejecutar_comando(salon, "QUITAR:Mariano,Lapras");
+  pa2m_afirmar(!res, "No se puede quitar si le queda un solo pokemon.");
+  salon_destruir(salon);
+}
+
+void salonEjecutar_EjecutaGuardar_GuardaSalon(){
+  salon_t* salon = salon_leer_archivo("./salones/salon_estandar.txt");
+  char* res = salon_ejecutar_comando(salon, "GUARDAR:./salones/salon_guardado.txt");
+  pa2m_afirmar(res, "Salon guardado con exito.");
+  free(res);
+  salon_destruir(salon);
+}
+
+
 int main(){
   pa2m_nuevo_grupo("Pruebas Salon");
   pa2m_nuevo_grupo("Salon Leer Archivo");
@@ -160,7 +240,17 @@ int main(){
   salonFiltrar_SiSalonEsNulo_NoSePuedeFiltrar();
   salonFiltrar_SalonDistintoNulo_SePuedeFiltrar();
   pa2m_nuevo_grupo("Salon Comandos");
-  salonEjecutar_EjecutaQuitarPokemon_SiTieneUnoSoloRetornaNull();
   salonEjecutar_ComandoInvalido_RetornaNull();
+  salonEjecutar_SalonInvalido_RetornaNull();
+  salonEjecutar_EjecutaEntrenadores_RetornaEntrenadores();
+  salonEjecutar_EjecutaEntrenadoresPorPokemon_RetornaEntrenadoresPorPokemon();
+  salonEjecutar_EjecutaEntrenadoresPorVictorias_RetornaEntrenadoresPorVictorias();
+  salonEjecutar_EquipoDeEntrenadorFueraDelSalon_RetornaNull();
+  salonEjecutar_Equipo_RetornaEquipo();
+  salonEjecutar_Reglas_RetornaReglas();
+  salonEjecutar_Comparar_Compara();
+  salonEjecutar_AgregaPokemon_AgregaPokemon();
+  salonEjecutar_EjecutaQuitarPokemon_SiTieneUnoSoloRetornaNull();
+  salonEjecutar_EjecutaGuardar_GuardaSalon();
   return pa2m_mostrar_reporte();
 }
