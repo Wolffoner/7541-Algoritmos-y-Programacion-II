@@ -41,13 +41,8 @@ size_t funcion_hash(const char* clave, size_t capacidad_tabla){
  * Retorna true si excedio el factor de carga y false en caso contrario.
 */
 bool excede_factor_carga(size_t capacidad_tabla, size_t cant_ocupadas){
-  bool excedido = false;
-  if(cant_ocupadas == 0)
-    return excedido;
   double resultado = (double)cant_ocupadas/capacidad_tabla;
-  if(resultado >= FACTOR_CARGA)
-    excedido = true;
-  return excedido;
+  return cant_ocupadas !=0 && resultado >= FACTOR_CARGA;
 }
 
 /*
@@ -297,9 +292,8 @@ bool hash_contiene(hash_t* hash, const char* clave){
 }
 
 void hash_destruir(hash_t* hash){
-  if(!hash){
+  if(!hash)
     return;
-  }
   for(size_t i = 0; i < hash->capacidad_tabla; i++){
     if(hash->tabla_hash[i] && hash->tabla_hash[i] != NODO_VACIO){
       if(hash->destructor){
